@@ -10,7 +10,7 @@ class UserListCreate(APIView):
         return render(request, 'user_list.html', {'users': users})
 
     def post(self, request):
-        # Usamos request.POST para obtener los datos del formulario HTML
+        
         serializer = UserSerializer(data=request.POST)
         if serializer.is_valid():
             serializer.save()
@@ -27,7 +27,7 @@ class UserDetail(APIView):
 
     def post(self, request, pk):
         user = get_object_or_404(User, pk=pk)
-        # Usamos request.POST para los datos del formulario HTML
+        
         serializer = UserSerializer(user, data=request.POST, partial=True)
         if serializer.is_valid():
             serializer.save()
@@ -36,14 +36,15 @@ class UserDetail(APIView):
 
     def delete(self, request, pk):
         user = get_object_or_404(User, pk=pk)
-        # Confirmar eliminación desde HTML
-        if request.method == "POST":
+        
+        if request.POST.get('_method') == 'DELETE':  
             if Voting.objects.filter(user_id=user).exists():
                 return render(request, 'user_confirm_delete.html', {'user': user, 'error': 'No se puede eliminar un usuario con votos asociados'})
             user.delete()
             users = User.objects.all()
             return render(request, 'user_list.html', {'users': users, 'message': 'Usuario eliminado exitosamente'})
         return render(request, 'user_confirm_delete.html', {'user': user})
+
 
 # CRUD para preguntas (Ask)
 class AskListCreate(APIView):
@@ -52,7 +53,7 @@ class AskListCreate(APIView):
         return render(request, 'ask_list.html', {'asks': asks})
 
     def post(self, request):
-        # Usamos request.POST para los datos del formulario HTML
+       
         serializer = AskSerializer(data=request.POST)
         if serializer.is_valid():
             serializer.save()
@@ -69,7 +70,7 @@ class AskDetail(APIView):
 
     def post(self, request, pk):
         ask = get_object_or_404(Ask, pk=pk)
-        # Usamos request.POST para los datos del formulario HTML
+       
         serializer = AskSerializer(ask, data=request.POST, partial=True)
         if serializer.is_valid():
             serializer.save()
@@ -78,8 +79,8 @@ class AskDetail(APIView):
 
     def delete(self, request, pk):
         ask = get_object_or_404(Ask, pk=pk)
-        # Confirmar eliminación desde HTML
-        if request.method == "POST":
+        
+        if request.POST.get('_method') == 'DELETE':
             if Answer.objects.filter(ask_id=ask).exists():
                 return render(request, 'ask_confirm_delete.html', {'ask': ask, 'error': 'No se puede eliminar una pregunta con respuestas asociadas'})
             ask.delete()
@@ -94,7 +95,7 @@ class AnswerListCreate(APIView):
         return render(request, 'answer_list.html', {'answers': answers})
 
     def post(self, request):
-        # Usamos request.POST para los datos del formulario HTML
+        
         serializer = AnswerSerializer(data=request.POST)
         if serializer.is_valid():
             serializer.save()
@@ -111,7 +112,7 @@ class AnswerDetail(APIView):
 
     def post(self, request, pk):
         answer = get_object_or_404(Answer, pk=pk)
-        # Usamos request.POST para los datos del formulario HTML
+        
         serializer = AnswerSerializer(answer, data=request.POST, partial=True)
         if serializer.is_valid():
             serializer.save()
@@ -120,8 +121,8 @@ class AnswerDetail(APIView):
 
     def delete(self, request, pk):
         answer = get_object_or_404(Answer, pk=pk)
-        # Confirmar eliminación desde HTML
-        if request.method == "POST":
+        
+        if request.POST.get('_method') == 'DELETE':
             if Voting.objects.filter(answer_id=answer).exists():
                 return render(request, 'answer_confirm_delete.html', {'answer': answer, 'error': 'No se puede eliminar una respuesta con votos asociados'})
             answer.delete()
@@ -136,10 +137,10 @@ class VotingListCreate(APIView):
         return render(request, 'voting_list.html', {'votes': votes})
 
     def post(self, request):
-        # Usamos request.POST para los datos del formulario HTML
+       
         serializer = VotingSerializer(data=request.POST)
         if serializer.is_valid():
-            # Verificamos si el voto ya existe para un usuario y una respuesta
+            
             if Voting.objects.filter(
                 answer_id=serializer.validated_data['answer_id'],
                 user_id=serializer.validated_data['user_id']
@@ -152,8 +153,9 @@ class VotingListCreate(APIView):
 class VotingDetail(APIView):
     def delete(self, request, pk):
         vote = get_object_or_404(Voting, pk=pk)
-        # Confirmar eliminación desde HTML
-        if request.method == "POST":
+        
+        if request.POST.get('_method') == 'DELETE':
             vote.delete()
             return render(request, 'voting_list.html', {'votes': Voting.objects.all(), 'message': 'Voto eliminado exitosamente'})
         return render(request, 'voting_confirm_delete.html', {'vote': vote})
+
