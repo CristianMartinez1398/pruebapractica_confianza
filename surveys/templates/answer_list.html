@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+
+    {% if message %}
+    <div class="message">{{ message }}</div>
+    {% endif %}
+    {% if errors %}
+    <div class="error">
+        <ul>
+            {% for error in errors.values %}
+            <li>{{ error }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+
+    <h2>Listado de Respuestas</h2>
+
+
+    <form method="POST" action="{% url 'answer-list-create' %}">
+        {% csrf_token %}
+        <label for="response_text">Texto de la Respuesta:</label>
+        <input type="text" id="response_text" name="response_text" required>
+        <br>
+        <button type="submit">Crear Respuesta</button>
+    </form>
+
+    <h3>Respuestas:</h3>
+    <ul>
+        {% for answer in answers %}
+        <li>
+            {{ answer.response_text }}
+            <a href="{% url 'answer_detail' answer.pk %}">Ver Detalles</a>
+            <a href="{% url 'answer_delete' answer.pk %}">Eliminar</a>
+        </li>
+        {% endfor %}
+    </ul>
+
+</body>
+
+</html>

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+
+    <h2>Detalles de la Pregunta: {{ ask.question_text }}</h2>
+
+    <form method="POST">
+        {% csrf_token %}
+        <label for="question_text">Texto de la Pregunta:</label>
+        <input type="text" id="question_text" name="question_text" value="{{ ask.question_text }}" required>
+        <br>
+        <button type="submit">Actualizar Pregunta</button>
+    </form>
+
+    {% if errors %}
+    <div class="error">
+        <ul>
+            {% for error in errors.values %}
+            <li>{{ error }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+</body>
+
+</html>

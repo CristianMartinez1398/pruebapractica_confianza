@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+
+    {% if message %}
+    <div class="message">{{ message }}</div>
+    {% endif %}
+    {% if errors %}
+    <div class="error">
+        <ul>
+            {% for error in errors.values %}
+            <li>{{ error }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+
+    <h2>Detalle del Voto</h2>
+
+    <p><strong>Usuario ID:</strong> {{ vote.user_id }}</p>
+    <p><strong>Respuesta ID:</strong> {{ vote.answer_id }}</p>
+
+
+    <h3>Editar Voto</h3>
+    <form method="POST">
+        {% csrf_token %}
+        <label for="user_id">ID de Usuario:</label>
+        <input type="number" id="user_id" name="user_id" value="{{ vote.user_id }}" required>
+        <br>
+        <label for="answer_id">ID de Respuesta:</label>
+        <input type="number" id="answer_id" name="answer_id" value="{{ vote.answer_id }}" required>
+        <br>
+        <button type="submit">Actualizar Voto</button>
+    </form>
+
+
+    <h3>Eliminar Voto</h3>
+    <form method="POST" action="{% url 'voting_delete' vote.pk %}">
+        {% csrf_token %}
+        <button type="submit">Eliminar este Voto</button>
+    </form>
+
+
+    <a href="{% url 'voting_list' %}">Volver al listado de votos</a>
+
+</body>
+
+</html>
